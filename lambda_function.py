@@ -7,8 +7,8 @@ def lambda_handler(event, context):
     ec2 = boto3.client('ec2')
     sns = boto3.client('sns')
 
-    deleted_snapshots = []  # ✅ Track deleted snapshots
-    skipped_snapshots = []  # ✅ Track skipped snapshots
+    deleted_snapshots = []  
+    skipped_snapshots = []
 
     # Get all EBS snapshots
     response = ec2.describe_snapshots(OwnerIds=['self'])
@@ -25,39 +25,40 @@ def lambda_handler(event, context):
         snapshot_id = snapshot['SnapshotId']
         volume_id = snapshot.get('VolumeId')
 
-        # Tag check
+        # Tag checking for "retain=true" to skip deletion
         tags = {t['Key']: t['Value'] for t in snapshot.get('Tags', [])}
         if tags.get('retain', '').lower() == 'true':
             print(f"Skipping snapshot {snapshot_id} — marked as retain=true")
-            skipped_snapshots.append(snapshot_id)  # ✅ Track it
+            skipped_snapshots.append(snapshot_id) 
             continue
-
+        # if no volume ID is associated with the snapshot, it can be safely deleted
         if not volume_id:
             ec2.delete_snapshot(SnapshotId=snapshot_id)
-            deleted_snapshots.append(snapshot_id)  # ✅ Track it
+            deleted_snapshots.append(snapshot_id) 
             print(f"Deleted EBS snapshot {snapshot_id} as it was not attached to any volume.")
         else:
             try:
+                # Check if the associated volume is attached to any active instance
                 volume_response = ec2.describe_volumes(VolumeIds=[volume_id])
                 if not volume_response['Volumes'][0]['Attachments']:
                     ec2.delete_snapshot(SnapshotId=snapshot_id)
-                    deleted_snapshots.append(snapshot_id)  # ✅ Track it
+                    deleted_snapshots.append(snapshot_id)  
                     print(f"Deleted EBS snapshot {snapshot_id} as it was taken from a volume not attached to any running instance.")
             except ec2.exceptions.ClientError as e:
                 if e.response['Error']['Code'] == 'InvalidVolume.NotFound':
                     ec2.delete_snapshot(SnapshotId=snapshot_id)
-                    deleted_snapshots.append(snapshot_id)  # ✅ Track it
+                    deleted_snapshots.append(snapshot_id) 
                     print(f"Deleted EBS snapshot {snapshot_id} as its associated volume was not found.")
 
-    # ✅ Send SNS summary email after all snapshots processed
+    # Sending SNS summary email, after all snapshots deleted or skipped (when the tag "retain" is present)
     if deleted_snapshots or skipped_snapshots:
         message = f"""
 AWS Snapshot Cleanup Report
 ============================
-✅ Deleted Snapshots ({len(deleted_snapshots)}):
+ Deleted Snapshots ({len(deleted_snapshots)}):
 {chr(10).join(deleted_snapshots) if deleted_snapshots else 'None'}
 
-⏭️ Skipped Snapshots - retain=true ({len(skipped_snapshots)}):
+ Skipped Snapshots - retain=true ({len(skipped_snapshots)}):
 {chr(10).join(skipped_snapshots) if skipped_snapshots else 'None'}
 
 Total Snapshots Deleted: {len(deleted_snapshots)}
