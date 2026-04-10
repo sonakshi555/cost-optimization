@@ -35,7 +35,7 @@ CloudWatch Events (Scheduled Trigger)
 ![alt text](<Screenshot 2026-04-08 110437.png>)
 
 ---
-
+![alt text](<Screenshot 2026-04-08 110451-1.png>)
 ## ✅ Features
 
 - 🗑️ **Auto-deletes** orphaned EBS snapshots not linked to any active EC2 instance or volume
@@ -63,7 +63,7 @@ The Lambda execution role is scoped to only the required permissions:
   "Resource": "*"
 }
 ```
-
+![alt text](<Screenshot 2026-04-08 110538.png>)
 ---
 
 ## ⚙️ Environment Variables
@@ -83,6 +83,7 @@ The Lambda execution role is scoped to only the required permissions:
 
 ## 📧 SNS Email Report Sample
 
+![alt text](<Screenshot 2026-04-08 111030.png>)
 ```
 AWS EBS Snapshot Cleanup Report
 ————————————————————
@@ -96,6 +97,7 @@ For logs: CloudWatch → /aws/lambda/snapshot-cleanup
 ————————————————————
 System-generated notification. Do not reply.
 ```
+![alt text](<Screenshot 2026-04-08 110556.png>)
 
 ---
 
@@ -121,6 +123,7 @@ Value: true
 | AWS IAM | Least privilege access control |
 
 ---
+![alt text](<Screenshot 2026-04-08 110828.png>)
 
 ## 💰 Cost Impact
 
