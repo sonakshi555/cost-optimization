@@ -97,7 +97,7 @@ For logs: CloudWatch → /aws/lambda/snapshot-cleanup
 ————————————————————
 System-generated notification. Do not reply.
 ```
-![alt text](<Screenshot 2026-04-08 110556.png>)
+![alt text](images/Screenshot-2026-04-08-110556.png)
 
 ---
 
