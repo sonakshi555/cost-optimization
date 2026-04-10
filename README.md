@@ -83,7 +83,7 @@ The Lambda execution role is scoped to only the required permissions:
 
 ## 📧 SNS Email Report Sample
 
-![alt text](<Screenshot 2026-04-08 111030.png>)
+![alt text](<images/lambda_overview.png>)
 ```
 AWS EBS Snapshot Cleanup Report
 ————————————————————
@@ -97,6 +97,7 @@ For logs: CloudWatch → /aws/lambda/snapshot-cleanup
 ————————————————————
 System-generated notification. Do not reply.
 ```
+
 ![alt text](<images/Screenshot 2026-04-08 110556.png>)
 
 ---
